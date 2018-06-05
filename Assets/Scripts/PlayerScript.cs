@@ -5,12 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour {
 
-	//float speed=5.0f;
 	float shootDelay=0.4f,specialDelay=1.5f;
 	float time=0.0f,special=1.5f;
 	Vector3 dir,shootDir;
-	//float rotSpeed=25.0f;
-	//private Rigidbody2D rigidBody;
 	public GameObject bulletPrefab;
 	public Controller moveController,shootController;
 	public static int currentRoom;
@@ -23,7 +20,6 @@ public class PlayerScript : MonoBehaviour {
 	void Start () {
 		Vector3[] spawnPointsArray=Rooms.validSpawnPoints.ToArray();
 		Vector3 spawn = spawnPointsArray [Random.Range (0, spawnPointsArray.Length-1)];
-		//rigidBody = GetComponent<Rigidbody2D> ();
 		this.gameObject.transform.position=spawn;
 	}
 	
@@ -69,13 +65,5 @@ public class PlayerScript : MonoBehaviour {
 			special = 0.0f;
 		}
 	}
-	public void OnTriggerEnter2D(Collider2D other){
-		if(other.gameObject.tag=="Finish")
-			StartCoroutine (WaitAndLoad ());
-	}
-	IEnumerator WaitAndLoad(){
-		yield return new WaitForSeconds (2.0f);
-		int scene = SceneManager.GetActiveScene ().buildIndex;
-		SceneManager.LoadScene (scene,LoadSceneMode.Single);
-	} 
+
 }

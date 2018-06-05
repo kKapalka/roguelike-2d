@@ -9,7 +9,8 @@ public enum BoardState{
 }
 
 public class BoardController : MonoBehaviour {
-	public static int width=65,height=65;
+	public static int width,height,expand=7;
+	public static int level=1;
 	public static BoardState[,] board;
 	public GameObject[] wallPrefabs;
 	public GameObject floor;
@@ -19,10 +20,11 @@ public class BoardController : MonoBehaviour {
 	public GameObject exit;
 	public GameObject player;
 	public Camera minimapCamera;
-	Leaf main;
+
 
 	void Awake(){
-		int expand = 7;
+		width = Rooms.Width + (5 * level);
+		height = Rooms.Height + (3 * level);
 		roomController = roomControl;
 
 
@@ -32,40 +34,16 @@ public class BoardController : MonoBehaviour {
 		board = new BoardState[width+(expand*2), height+(expand*2)];
 
 		minimapCamera.transform.position = new Vector3 (((float)width + 5.0f) / 2 * Rooms.wallSize, ((float)height + 5.0f) / 2 * Rooms.wallSize, -10.0f);
-		//minimapCamera.fieldOfView = width * 3+3;
 
-		main = new Leaf (expand, expand, width+expand, height+expand,0);
+		Leaf main = new Leaf (expand, expand, width+expand, height+expand);
 		GameObject prefabInstance;
 		for (int i = 0; i < board.GetLength(0); i++) {
 			for (int j = 0; j < board.GetLength(1); j++) {
 				if (board [i, j] == BoardState.Wall) {
 					if (i < 3 || j < 3 || i > board.GetLength (0)-3 || j > board.GetLength (1)-3) {
-						prefabInstance = (GameObject)Instantiate (wallPrefabs [0], boardController.transform);
+						prefabInstance = (GameObject)Instantiate (wallPrefabs[0], boardController.transform);
 					} else {
-						if (board [i - 1, j] == BoardState.Floor) {
-							if (board [i, j - 1] == BoardState.Floor) {
-								prefabInstance = (GameObject)Instantiate (wallPrefabs [8], boardController.transform);
-							} else if (board [i, j + 1] == BoardState.Floor) {
-								prefabInstance = (GameObject)Instantiate (wallPrefabs [5], boardController.transform);
-							} else {
-								prefabInstance = (GameObject)Instantiate (wallPrefabs [2], boardController.transform);
-							}
-						} else if (board [i + 1, j] == BoardState.Floor) {
-							if (board [i, j - 1] == BoardState.Floor) {
-								prefabInstance = (GameObject)Instantiate (wallPrefabs [7], boardController.transform);
-							} else if (board [i, j + 1] == BoardState.Floor) {
-								prefabInstance = (GameObject)Instantiate (wallPrefabs [6], boardController.transform);
-							} else {
-								prefabInstance = (GameObject)Instantiate (wallPrefabs [4], boardController.transform);
-							}
-						} else if (board [i, j - 1] == BoardState.Floor) {
-							prefabInstance = (GameObject)Instantiate (wallPrefabs [1], boardController.transform);
-						} else if (board [i, j + 1] == BoardState.Floor) {
-							prefabInstance = (GameObject)Instantiate (wallPrefabs [3], boardController.transform);
-						} else {
-							prefabInstance = (GameObject)Instantiate (wallPrefabs [0], boardController.transform);
-
-						}
+						prefabInstance = (GameObject)Instantiate (wallPrefabs [getNeighbors (i, j)], boardController.transform);
 					}
 				} else {
 					prefabInstance = (GameObject)Instantiate (floor, boardController.transform);
@@ -78,11 +56,21 @@ public class BoardController : MonoBehaviour {
 		Vector3[] spawnPointsArray=Rooms.validSpawnPoints.ToArray();
 		Vector3 spawn = spawnPointsArray [Random.Range (0, spawnPointsArray.Length-1)];
 		Rooms.validSpawnPoints.Remove (spawn);
-		GameObject go_exit = (GameObject)Instantiate (exit, spawn, Quaternion.identity);
-		player.SetActive (false);
-		player.SetActive (true);
+		Instantiate (exit, spawn, Quaternion.identity);
 	}
 
 
-
+	
+	int getNeighbors(int i, int j){
+		int neighbors = 0;
+		if (board [i - 1, j] == BoardState.Floor)
+			neighbors += 1;
+		if (board [i, j+1] == BoardState.Floor)
+			neighbors += 2;
+		if (board [i+1, j] == BoardState.Floor)
+			neighbors += 4;
+		if (board [i, j-1] == BoardState.Floor)
+			neighbors += 8;
+		return neighbors;
+	}
 }
