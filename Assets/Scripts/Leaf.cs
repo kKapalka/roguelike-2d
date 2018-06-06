@@ -6,7 +6,6 @@ public class Leaf{
 	public int x1,y1,x2,y2;
 	Leaf left,right;
 	string splitDirection;
-	public GameObject roomController;
 
 	public Leaf(int x1,int y1,int x2,int y2){
 		this.x1 = x1;
@@ -55,16 +54,15 @@ public class Leaf{
 		//subtract from outer bounds to create proper walls
 		x1=Mathf.Clamp(x1+Random.Range(1,(width/3)+1),0,BoardController.width+BoardController.expand-1);
 		y1 = Mathf.Clamp (y1 + Random.Range (1, (height/3)+1), 0, BoardController.height+BoardController.expand-1);
-		x2=Mathf.Clamp(x2-Random.Range(1,(width/3)+1),0,BoardController.width+BoardController.expand-1);
-		y2=Mathf.Clamp(y2-Random.Range(1,(height/3)+1),0,BoardController.height+BoardController.expand-1);
+		x2=Mathf.Clamp(x2-Random.Range(1,(width/3)+2),0,BoardController.width+BoardController.expand-1);
+		y2=Mathf.Clamp(y2-Random.Range(1,(height/3)+2),0,BoardController.height+BoardController.expand-1);
 		//fill inside with floor
-		for (int i = x1; i < x2; i++) {
-			for (int j = y1; j < y2; j++) {
+		for (int i = x1; i <= x2; i++) {
+			for (int j = y1; j <= y2; j++) {
 				BoardController.board [i, j] = BoardState.Floor;
 			}
 		}
-		Rooms.validSpawnPoints.Add(new Vector3((x1+x2-1)/2*Rooms.wallSize,(y1+y2-1)/2*Rooms.wallSize,0f));
-		createRoomController ();
+		Rooms.roomData.Add(new Rooms.RoomData(new Vector3((x1+x2)/2*Rooms.wallSize,(y1+y2)/2*Rooms.wallSize,0f),Mathf.Min(x2-x1,y2-y1)));
 	}
 
 	void ConnectRooms(){
@@ -74,7 +72,11 @@ public class Leaf{
 		x2 = Mathf.Max (left.x2, right.x2);
 		y2= Mathf.Max (left.y2, right.y2);
 		//coords for the smallest box where a corridor can be placed to connect two rooms together
-		int tempx1, tempx2, tempy1, tempy2;
+		int tempx1;
+		int tempy1;
+		int tempx2;
+		int tempy2;
+
 		int fill;
 
 		int coord;
@@ -86,18 +88,21 @@ public class Leaf{
 			tempy2 = right.y1;
 			coord = Random.Range (tempx1, tempx2);
 			//main corridor part
-			for (int i = tempy1; i < tempy2; i++) {
+			for (int i = tempy1; i <= tempy2; i++) {
 				BoardController.board [coord, i] = BoardState.Floor;
 				BoardController.board [((coord > BoardController.width / 2) ? coord - 1 : coord + 1), i] = BoardState.Floor;
 			}
 			//fill until floor has been found
-			fill =tempy1-1;
-			while (BoardController.board [coord, fill] != BoardState.Floor && fill>BoardController.expand) {
+			fill = tempy1 - 1;
+			while (BoardController.board [coord, fill] != BoardState.Floor && fill > BoardController.expand) {
+				
 				BoardController.board [coord, fill] = BoardState.Floor;
 				BoardController.board [((coord > BoardController.width / 2) ? coord - 1 : coord + 1), fill--] = BoardState.Floor;
 			}
-			fill = tempy2;
-			while (BoardController.board [coord, fill] != BoardState.Floor && fill<BoardController.height) {
+
+			fill = tempy2+1;
+			while (BoardController.board [coord, fill] != BoardState.Floor && fill<BoardController.height+BoardController.expand) {
+				
 				BoardController.board [coord, fill] = BoardState.Floor;
 				BoardController.board [((coord > BoardController.width / 2) ? coord - 1 : coord + 1), fill++] = BoardState.Floor;
 			}
@@ -110,30 +115,25 @@ public class Leaf{
 			coord = Random.Range (tempy1, tempy2);
 
 			//main corridor part
-			for (int i = tempx1; i < tempx2; i++) {
+			for (int i = tempx1; i <= tempx2; i++) {
 				BoardController.board [i, coord] = BoardState.Floor;
-				BoardController.board [i,((coord > BoardController.height / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
+				BoardController.board [i, ((coord > BoardController.height / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
 			}
 			//fill until floor has been found
-			fill =tempx1-1;
-			while (BoardController.board [fill,coord] != BoardState.Floor && fill>BoardController.expand) {
-				BoardController.board [fill,coord] = BoardState.Floor;
-				BoardController.board [fill--,((coord > BoardController.width / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
+			fill = tempx1 - 1;
+			while (BoardController.board [fill, coord] != BoardState.Floor && fill > BoardController.expand) {
+				
+				BoardController.board [fill, coord] = BoardState.Floor;
+				BoardController.board [fill--, ((coord > BoardController.height / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
 			}
-			fill = tempx2;
-			while (BoardController.board [fill,coord] != BoardState.Floor && fill<BoardController.width) {
+
+			fill = tempx2+1;
+			while (BoardController.board [fill,coord] != BoardState.Floor && fill<BoardController.width+BoardController.expand) {
+				
 				BoardController.board [fill,coord] = BoardState.Floor;
-				BoardController.board [fill++,((coord > BoardController.width / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
+				BoardController.board [fill++,((coord > BoardController.height / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
 			}
 			break;
 		}
 	}
-
-	public void createRoomController(){
-		roomController = (GameObject)UnityEngine.MonoBehaviour.Instantiate (BoardController.roomController,Vector3.zero,Quaternion.identity);
-		roomController.GetComponent<RoomController> ().setColliderBounds (this);
-		roomController.GetComponent<RoomController> ().roomBelonging = Rooms.rooms++;
-		Rooms.roomControllers.Add (roomController);
-	}
-
 }

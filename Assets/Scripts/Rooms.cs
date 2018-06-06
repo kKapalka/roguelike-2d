@@ -4,16 +4,24 @@ using UnityEngine;
 
 public static class Rooms{
 	public static int minSize = 10;
-	public static int rooms=0;
-	public static int Width = 37, Height = 37;
+	public static int Width = 27, Height = 27;
 	public static float wallSize;
-	public static List<Vector3> validSpawnPoints = new List<Vector3>();
-	public static List<GameObject> roomControllers=new List<GameObject>();
+	public static bool complete=false,lose=false;
+	public static string DeathText;
+
 	public static void ClearData(){
-		validSpawnPoints.Clear ();
-		roomControllers.Clear ();
+		roomData.Clear ();
 	}
+	public class RoomData{
+		public Vector3 spawnPoint = new Vector3();
+		public float diameter;
 
+		public RoomData(Vector3 sp, float d){
+			this.spawnPoint=sp;
+			this.diameter=d;
+		}
 
+	}
+	public static List<RoomData> roomData = new List<RoomData>();
 
 }

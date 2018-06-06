@@ -16,6 +16,12 @@ Things done so far:
 - minimap at top left corner
 - semi-2d simulation (by that I mean the part where a fraction of player sprite will go on top of the wall)
 
+Changelog #3:
+
+- added spinning killer traps: touching the white circles results in 'death'
+
+- etc etc etc.
+
 
 Changelog #2:
 

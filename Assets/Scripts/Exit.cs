@@ -5,19 +5,18 @@ using UnityEngine.SceneManagement;
 
 public class Exit : MonoBehaviour {
 
-	public void Ex(){
-		Application.Quit ();
+	public void Return(){
+		SceneManager.LoadScene ("MainMenu");
 	}
 	public void OnTriggerEnter2D(Collider2D other){
-		if(other.gameObject.tag=="Player")
-			StartCoroutine (WaitAndLoad ());
+		if (other.gameObject.tag == "Player") {
+			Rooms.complete = true;
+		}
 	}
-
-
-	IEnumerator WaitAndLoad(){
-		yield return new WaitForSeconds (2.0f);
+	public void loadNewLevel(){
 		int scene = SceneManager.GetActiveScene ().buildIndex;
 		SceneManager.LoadScene (scene,LoadSceneMode.Single);
-	} 
+	}
+
 
 }

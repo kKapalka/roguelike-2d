@@ -5,65 +5,39 @@ using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour {
 
-	float shootDelay=0.4f,specialDelay=1.5f;
-	float time=0.0f,special=1.5f;
-	Vector3 dir,shootDir;
-	public GameObject bulletPrefab;
-	public Controller moveController,shootController;
-	public static int currentRoom;
 
-	public static void setCurrentRoom(int cur){
-		currentRoom = cur;
-	}
+	float walkTime,trackDelay=0.4f;
+	Vector3 dir,shootDir;
+	public GameObject trackPrefab;
+	public Controller moveController;
+	public BoxCollider2D collider1,collider2;
 
 	// Use this for initialization
-	void Start () {
-		Vector3[] spawnPointsArray=Rooms.validSpawnPoints.ToArray();
-		Vector3 spawn = spawnPointsArray [Random.Range (0, spawnPointsArray.Length-1)];
-		this.gameObject.transform.position=spawn;
-	}
+
 	
 	// Update is called once per frame
 	void Update () {
-		time += Time.deltaTime;
-		special += Time.deltaTime;
-
-		if (moveController.InputDirection != Vector3.zero) {
+		if (moveController.InputDirection != Vector3.zero && !Rooms.complete) {
+			walkTime += Time.deltaTime;
+			if (walkTime > trackDelay) {
+				Instantiate (trackPrefab, this.transform.position, Quaternion.identity);
+				walkTime = 0f;
+			}
 			dir = moveController.InputDirection;
 			Vector3 rotatedDir = new Vector3 (dir.x, dir.z, 0);
-
-			this.gameObject.transform.position+=rotatedDir/10;
-		}
-		if (shootController.InputDirection != Vector3.zero) {
-			
-			if (time > shootDelay) {
-				shootDir = shootController.InputDirection;
-				Vector3 sRotatedDir = new Vector3 (shootDir.x, shootDir.z, 0);
-				var bullet = (GameObject)Instantiate (
-					bulletPrefab,
-					this.transform.position,
-					Quaternion.identity);
-				bullet.transform.SetParent (this.transform);
-				bullet.transform.position = this.transform.position;
-				bullet.GetComponent<Bullet> ().setDirection (sRotatedDir);
-				time = 0.0f;
-			}
+			this.transform.position+=rotatedDir/10;
 		}
 	}
-	public void shootInAllDirections(){
-		if (special > specialDelay) {
-			for (int i = 0; i < 12; i++) {
-				Vector3 rotDir = new Vector3 (Mathf.Sin (Mathf.Deg2Rad*30.0f * i), Mathf.Cos (Mathf.Deg2Rad*30.0f * i), 0);
-				var bullet = (GameObject)Instantiate (
-					bulletPrefab,
-					this.transform.position,
-					Quaternion.identity);
-				bullet.transform.SetParent (this.transform);
-				bullet.transform.position = this.transform.position;
-				bullet.GetComponent<Bullet> ().setDirection (rotDir);
-			}
-			special = 0.0f;
+	void OnTriggerEnter2D(Collider2D other){
+		if (collider1.IsTouching (other) && other.gameObject.tag == "Killer") {
+			Rooms.lose = true;
+			Rooms.complete = true;
+			Rooms.DeathText = "you  have  been  smacked   by  the  killer  trap";
+		} else if (collider1.IsTouching (other) && other.gameObject.tag == "Finish") {
+			Rooms.lose = false;
+			Rooms.complete = true;
+		} else if (other.gameObject.tag == "Wall") {
+			other.gameObject.layer = 11;
 		}
 	}
-
 }
