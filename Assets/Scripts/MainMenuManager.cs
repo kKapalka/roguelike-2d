@@ -11,12 +11,9 @@ public class MainMenuManager : MonoBehaviour {
 	public Text highScoreText;
 	public GameObject hintText,creditsText;
 	void Start(){
-		if(PlayerPrefs.HasKey("Level")){
-			if(PlayerPrefs.GetInt("Level")==1){
-				continueButton.SetActive(false);
-			}
-		}else{
-			continueButton.SetActive(false);
+		continueButton.SetActive (false);
+		if (PlayerPrefs.HasKey ("Level") && PlayerPrefs.GetInt ("Level") != 1) {
+			continueButton.SetActive (true);
 		}
 		hintText.SetActive (false);
 		highScoreText.gameObject.SetActive (false);

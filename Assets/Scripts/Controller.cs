@@ -17,7 +17,7 @@ public class Controller : MonoBehaviour, IDragHandler,IPointerDownHandler,IPoint
 	}
 
 	public virtual void OnDrag(PointerEventData ped){
-		Vector2 pos = Vector2.zero;
+		Vector2 pos = new Vector2(backgroundImage.rectTransform.position.x,backgroundImage.rectTransform.position.y);
 		if (RectTransformUtility.ScreenPointToLocalPointInRectangle
 			(backgroundImage.rectTransform,
 			   ped.position,
@@ -27,9 +27,7 @@ public class Controller : MonoBehaviour, IDragHandler,IPointerDownHandler,IPoint
 			pos.x = (pos.x / backgroundImage.rectTransform.sizeDelta.x);
 			pos.y = (pos.y / backgroundImage.rectTransform.sizeDelta.y);
 
-			float x = (backgroundImage.rectTransform.pivot.x == 1) ? pos.x * 2 + 1 : pos.x * 2 - 1;
-			float y = (backgroundImage.rectTransform.pivot.y == 1) ? pos.y * 2 + 1 : pos.y * 2 - 1;
-			InputDirection = new Vector3 (x, 0, y);
+			InputDirection = new Vector3 (pos.x*5, 0, pos.y*5);
 			InputDirection = (InputDirection.magnitude > 1) ? InputDirection.normalized : InputDirection;
 
 			controllerImage.rectTransform.anchoredPosition =

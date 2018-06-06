@@ -7,7 +7,6 @@ using System.IO;
 public enum BoardState{
 	Wall,
 	Floor,
-	Added
 }
 
 public class BoardController : MonoBehaviour {
@@ -16,7 +15,7 @@ public class BoardController : MonoBehaviour {
 	public static BoardState[,] board;
 	float time=0.0f;
 	public GameObject[] wallPrefabs;
-	public GameObject floor,killerTrap;
+	public GameObject floor,killerTrap,shooterTrap;
 	public GameObject boardController;
 	public GameObject exit;
 	public GameObject player;
@@ -38,7 +37,7 @@ public class BoardController : MonoBehaviour {
 		}
 		player.GetComponent<PlayerScript> ().moveController.gameObject.SetActive (true);
 		minimapCamera.rect = new Rect (0.02f, 0.7f, 0.2f, 0.3f);
-		minimapCamera.fieldOfView = 124+(2*level);
+		minimapCamera.fieldOfView = 118+(3*level);
 
 		width = Rooms.Width + (3 * level);
 		height = Rooms.Height + (2 * level);
@@ -49,7 +48,7 @@ public class BoardController : MonoBehaviour {
 		Rooms.wallSize = wallPrefabs[0].GetComponent<SpriteRenderer>().bounds.size.x;
 		board = new BoardState[width+(expand*2), height+(expand*2)];
 
-		minimapCamera.transform.position = new Vector3 (((float)width + 5.0f) / 2 * Rooms.wallSize, ((float)height+5 + 5.0f) / 2 * Rooms.wallSize, -10.0f);
+		minimapCamera.transform.position = new Vector3 (((float)width + 10.0f) / 2 * Rooms.wallSize, ((float)height+5 + 8.0f) / 2 * Rooms.wallSize, -10.0f);
 
 		Leaf main = new Leaf (expand, expand, width+expand, height+expand);
 		GameObject prefabInstance;
@@ -93,7 +92,14 @@ public class BoardController : MonoBehaviour {
 			data = Rooms.roomData.ToArray() [randomNumber];
 			Rooms.roomData.Remove (data);
 			Instantiate (killerTrap, data.spawnPoint, Quaternion.identity);
-			killerTrap.GetComponent<KillerTrapScript> ().setSize (data.diameter/2);
+		}
+		for (int i = 0; i < Mathf.Clamp(level-3,0,int.MaxValue); i ++) {
+			if (Rooms.roomData.Count == 0)
+				return;
+			randomNumber = Random.Range (0, Rooms.roomData.ToArray ().Length - 1);
+			data = Rooms.roomData.ToArray() [randomNumber];
+			Rooms.roomData.Remove (data);
+			Instantiate (shooterTrap, data.spawnPoint, Quaternion.identity);
 		}
 
 	}
@@ -127,7 +133,7 @@ public class BoardController : MonoBehaviour {
 
 			} else {
 				endPanel.transform.GetChild (1).gameObject.GetComponent<Text> ().text = "you  completed  the  level\nin  " + seconds + ":" + fraction + "  seconds!";
-				PlayerPrefs.SetInt("Score",PlayerPrefs.GetInt("Score")+Mathf.Clamp(100+(20*level)-Mathf.RoundToInt(time*3),0,int.MaxValue));
+				PlayerPrefs.SetInt("Score",PlayerPrefs.GetInt("Score")+Mathf.Clamp(80+(35*level)-Mathf.RoundToInt(time*3),0,int.MaxValue));
 				PlayerPrefs.SetInt ("Level", PlayerPrefs.GetInt ("Level") + 1);
 				endPanel.transform.GetChild (1).gameObject.GetComponent<Text> ().text += "\ncurrent  score:   " + PlayerPrefs.GetInt ("Score");
 			}

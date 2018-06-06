@@ -1,13 +1,13 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\KillerTrapScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Controller.cs">
     <Files>
-      <File FileName="Assets\Scripts\Exit.cs" Line="17" Column="66" />
-      <File FileName="Assets\Scripts\BoardController.cs" Line="75" Column="36" />
-      <File FileName="Assets\Scripts\Rooms.cs" Line="7" Column="43" />
-      <File FileName="Assets\Scripts\PlayerScript.cs" Line="9" Column="31" />
-      <File FileName="Assets\Scripts\Leaf.cs" Line="133" Column="58" />
-      <File FileName="Assets\Scripts\KillerTrapScript.cs" Line="11" Column="25" />
+      <File FileName="Assets\Scripts\BoardController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ShooterTrapScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Bullet.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\KillerTrapScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\MainMenuManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Controller.cs" Line="21" Column="62" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
