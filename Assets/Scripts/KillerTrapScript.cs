@@ -7,8 +7,7 @@ public class KillerTrapScript : MonoBehaviour {
 	float speed,size;
 
 	void Start(){
-		speed = Random.Range (3, 9);
-		size = Random.Range (4, Rooms.minSize);
+		size = Random.Range (5, Rooms.minSize);
 		speed = Mathf.Clamp(Random.Range (8, 14)-size,3,float.MaxValue);
 		transform.GetChild (0).transform.localScale = new Vector3(size/6,size/6,1);
 	}

@@ -30,7 +30,7 @@ public class PlayerScript : MonoBehaviour {
 			Vector3 rotatedDir = new Vector3 (dir.x, dir.z, 0);
 			lastDirection = rotatedDir;
 			this.transform.position += rotatedDir / 12;
-			animationTime += Time.deltaTime;
+			animationTime += Time.deltaTime * (dir.x + dir.z)/2;
 			GetComponent<SpriteRenderer> ().sprite = animationSprites [(int)Mathf.Floor (animationTime * 8) % 4+(getDirection(rotatedDir)*4)];
 
 		} else {

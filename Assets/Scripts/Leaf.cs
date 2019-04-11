@@ -52,10 +52,10 @@ public class Leaf{
 		int width = x2 - x1;
 		int height = y2 - y1;
 		//subtract from outer bounds to create proper walls
-		x1=Mathf.Clamp(x1+Random.Range(1,(width/3)+1),0,BoardController.width+BoardController.expand-1);
-		y1 = Mathf.Clamp (y1 + Random.Range (1, (height/3)+1), 0, BoardController.height+BoardController.expand-1);
-		x2=Mathf.Clamp(x2-Random.Range(1,(width/3)+2),0,BoardController.width+BoardController.expand-1);
-		y2=Mathf.Clamp(y2-Random.Range(1,(height/3)+2),0,BoardController.height+BoardController.expand-1);
+		x1=Mathf.Clamp(x1+Random.Range(1,(width/3)+1),0,BoardController.BOARD_WIDTH+BoardController.BOARD_SIDES_BUFFER-1);
+		y1 = Mathf.Clamp (y1 + Random.Range (1, (height/3)+1), 0, BoardController.BOARD_HEIGHT+BoardController.BOARD_SIDES_BUFFER-1);
+		x2=Mathf.Clamp(x2-Random.Range(1,(width/3)+2),0,BoardController.BOARD_WIDTH+BoardController.BOARD_SIDES_BUFFER-1);
+		y2=Mathf.Clamp(y2-Random.Range(1,(height/3)+2),0,BoardController.BOARD_HEIGHT+BoardController.BOARD_SIDES_BUFFER-1);
 		//fill inside with floor
 		for (int i = x1; i <= x2; i++) {
 			for (int j = y1; j <= y2; j++) {
@@ -90,21 +90,21 @@ public class Leaf{
 			//main corridor part
 			for (int i = tempy1; i <= tempy2; i++) {
 				BoardController.board [coord, i] = BoardState.Floor;
-				BoardController.board [((coord > BoardController.width / 2) ? coord - 1 : coord + 1), i] = BoardState.Floor;
+				BoardController.board [((coord > BoardController.BOARD_WIDTH / 2) ? coord - 1 : coord + 1), i] = BoardState.Floor;
 			}
 			//fill until floor has been found
 			fill = tempy1 - 1;
-			while (BoardController.board [coord, fill] != BoardState.Floor && fill > BoardController.expand) {
+			while (BoardController.board [coord, fill] != BoardState.Floor && fill > BoardController.BOARD_SIDES_BUFFER) {
 				
 				BoardController.board [coord, fill] = BoardState.Floor;
-				BoardController.board [((coord > BoardController.width / 2) ? coord - 1 : coord + 1), fill--] = BoardState.Floor;
+				BoardController.board [((coord > BoardController.BOARD_WIDTH / 2) ? coord - 1 : coord + 1), fill--] = BoardState.Floor;
 			}
 
 			fill = tempy2+1;
-			while (BoardController.board [coord, fill] != BoardState.Floor && fill<BoardController.height+BoardController.expand) {
+			while (BoardController.board [coord, fill] != BoardState.Floor && fill<BoardController.BOARD_HEIGHT+BoardController.BOARD_SIDES_BUFFER) {
 				
 				BoardController.board [coord, fill] = BoardState.Floor;
-				BoardController.board [((coord > BoardController.width / 2) ? coord - 1 : coord + 1), fill++] = BoardState.Floor;
+				BoardController.board [((coord > BoardController.BOARD_WIDTH / 2) ? coord - 1 : coord + 1), fill++] = BoardState.Floor;
 			}
 			break;
 		case "Vertical":
@@ -117,21 +117,21 @@ public class Leaf{
 			//main corridor part
 			for (int i = tempx1; i <= tempx2; i++) {
 				BoardController.board [i, coord] = BoardState.Floor;
-				BoardController.board [i, ((coord > BoardController.height / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
+				BoardController.board [i, ((coord > BoardController.BOARD_HEIGHT / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
 			}
 			//fill until floor has been found
 			fill = tempx1 - 1;
-			while (BoardController.board [fill, coord] != BoardState.Floor && fill > BoardController.expand) {
+			while (BoardController.board [fill, coord] != BoardState.Floor && fill > BoardController.BOARD_SIDES_BUFFER) {
 				
 				BoardController.board [fill, coord] = BoardState.Floor;
-				BoardController.board [fill--, ((coord > BoardController.height / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
+				BoardController.board [fill--, ((coord > BoardController.BOARD_HEIGHT / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
 			}
 
 			fill = tempx2+1;
-			while (BoardController.board [fill,coord] != BoardState.Floor && fill<BoardController.width+BoardController.expand) {
+			while (BoardController.board [fill,coord] != BoardState.Floor && fill<BoardController.BOARD_WIDTH+BoardController.BOARD_SIDES_BUFFER) {
 				
 				BoardController.board [fill,coord] = BoardState.Floor;
-				BoardController.board [fill++,((coord > BoardController.height / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
+				BoardController.board [fill++,((coord > BoardController.BOARD_HEIGHT / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
 			}
 			break;
 		}

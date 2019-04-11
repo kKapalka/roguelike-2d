@@ -10,10 +10,17 @@ public enum BoardState{
 }
 
 public class BoardController : MonoBehaviour {
-	public static int width,height,expand=7;
+
+    public static int BOARD_WIDTH, BOARD_HEIGHT, BOARD_SIDES_BUFFER = 7;
+    public static int WIDTH_GROWTH = 3;
+    public static int HEIGHT_GROWTH = 2;
+	
+	public static Rect MINIMAP_POSITION = new Rect(0.02f, 0.7f, 0.2f, 0.3f);
+	public static int MINIMAP_STARTING_FIELDOFVIEW = 118;
 	int level=0;
-	public static BoardState[,] board;
 	float time=0.0f;
+	
+	public static BoardState[,] board;
 	public GameObject[] wallPrefabs;
 	public GameObject floor,killerTrap,shooterTrap;
 	public GameObject boardController;
@@ -22,6 +29,7 @@ public class BoardController : MonoBehaviour {
 	public GameObject endPanel;
 	public Text levelText,timerText;
 	public Camera minimapCamera;
+	
 	int seconds,fraction;
 	bool loaded;
 	void Awake(){
@@ -36,73 +44,79 @@ public class BoardController : MonoBehaviour {
 			level=PlayerPrefs.GetInt("Level");
 		}
 		player.GetComponent<PlayerScript> ().moveController.gameObject.SetActive (true);
-		minimapCamera.rect = new Rect (0.02f, 0.7f, 0.2f, 0.3f);
-		minimapCamera.fieldOfView = 118+(3*level);
+		minimapCamera.rect = MINIMAP_POSITION;
+		minimapCamera.fieldOfView = MINIMAP_STARTING_FIELDOFVIEW+(WIDTH_GROWTH*level);
 
-		width = Rooms.Width + (3 * level);
-		height = Rooms.Height + (2 * level);
+		BOARD_WIDTH = Rooms.Width + (WIDTH_GROWTH * level);
+		BOARD_HEIGHT = Rooms.Height + (HEIGHT_GROWTH * level);
 		levelText.text = "Level " + level;
 
 
 		Rooms.ClearData ();
 		Rooms.wallSize = wallPrefabs[0].GetComponent<SpriteRenderer>().bounds.size.x;
-		board = new BoardState[width+(expand*2), height+(expand*2)];
+		board = new BoardState[BOARD_WIDTH+(BOARD_SIDES_BUFFER*2), BOARD_HEIGHT+(BOARD_SIDES_BUFFER*2)];
 
-		minimapCamera.transform.position = new Vector3 (((float)width + 10.0f) / 2 * Rooms.wallSize, ((float)height+5 + 8.0f) / 2 * Rooms.wallSize, -10.0f);
+		minimapCamera.transform.position = new Vector3 (((float)BOARD_WIDTH + 10.0f) / 2 * Rooms.wallSize, ((float)BOARD_HEIGHT+5 + 8.0f) / 2 * Rooms.wallSize, -10.0f);
 
-		Leaf main = new Leaf (expand, expand, width+expand, height+expand);
-		GameObject prefabInstance;
-		for (int i = expand-1; i < board.GetLength(0)-expand+1; i++) {
-			for (int j = expand-1; j < board.GetLength(1)-expand+1; j++) {
-				if (board [i, j] == BoardState.Wall) {
-					if (getNeighbors (i, j) != 0) {
-						prefabInstance = (GameObject)Instantiate (wallPrefabs [getNeighbors (i, j)], boardController.transform);
-						prefabInstance.transform.position = new Vector3 (i*Rooms.wallSize, j*Rooms.wallSize, 0f);
-					}
-				} else {
-					if(board[i,j]==BoardState.Floor)
-						prefabInstance = (GameObject)Instantiate (floor, boardController.transform);
-					else prefabInstance = (GameObject)Instantiate (floor, boardController.transform);
-					prefabInstance.transform.position = new Vector3 (i*Rooms.wallSize, j*Rooms.wallSize, 0f);
-				}
-			}
-		}
-		//player here
-		int randomNumber = Random.Range (0, (Rooms.roomData.ToArray ().Length)/3);
-		//finish here
-		int randomNumber2 = Random.Range (2*(Rooms.roomData.ToArray ().Length)/3, Rooms.roomData.ToArray ().Length-1);
-		Rooms.RoomData data, data2;
-		if (Random.Range (0, 10) > 5) {
-			data = Rooms.roomData.ToArray () [randomNumber];
-			data2 = Rooms.roomData.ToArray () [randomNumber2];
-		} else {
-			data2 = Rooms.roomData.ToArray () [randomNumber];
-			data = Rooms.roomData.ToArray () [randomNumber2];
-		}
+		Leaf main = new Leaf (BOARD_SIDES_BUFFER, BOARD_SIDES_BUFFER, BOARD_WIDTH+BOARD_SIDES_BUFFER, BOARD_HEIGHT+BOARD_SIDES_BUFFER);
+		generateLayout(board);
 
-		Rooms.roomData.Remove (data);
-		Instantiate (exit, data.spawnPoint, Quaternion.identity);
-		Rooms.roomData.Remove (data2);
-		player.transform.position = data2.spawnPoint;
-		//to ensure there is more space between them
-		for (int i = 0; i < level; i ++) {
-			if (Rooms.roomData.Count == 0)
-				return;
-			randomNumber = Random.Range (0, Rooms.roomData.ToArray ().Length - 1);
-			data = Rooms.roomData.ToArray() [randomNumber];
-			Rooms.roomData.Remove (data);
-			Instantiate (killerTrap, data.spawnPoint, Quaternion.identity);
-		}
-		for (int i = 0; i < Mathf.Clamp(level-3,0,int.MaxValue); i ++) {
-			if (Rooms.roomData.Count == 0)
-				return;
-			randomNumber = Random.Range (0, Rooms.roomData.ToArray ().Length - 1);
-			data = Rooms.roomData.ToArray() [randomNumber];
-			Rooms.roomData.Remove (data);
-			Instantiate (shooterTrap, data.spawnPoint, Quaternion.identity);
-		}
+		int numberOfKillerTrapsPerLevel = level;
+		int numberOfShooterTrapsPerLevel = Mathf.Clamp(level-3,0,int.MaxValue)
+
+
+        plantTraps(data,killerTrap,numberOfKillerTrapsPerLevel);
+        plantTraps(data,shooterTrap,numberOfShooterTrapsPerLevel);
 
 	}
+
+    void generateLayout(BoardState[,] board){
+        GameObject prefabInstance;
+        for (int i = BOARD_SIDES_BUFFER-1; i < board.GetLength(0)-BOARD_SIDES_BUFFER+1; i++) {
+            for (int j = BOARD_SIDES_BUFFER-1; j < board.GetLength(1)-BOARD_SIDES_BUFFER+1; j++) {
+                if (board [i, j] == BoardState.Wall) {
+                    if (getNeighbors (i, j) != 0) {
+                        prefabInstance = (GameObject)Instantiate (wallPrefabs [getNeighbors (i, j)], boardController.transform);
+                        prefabInstance.transform.position = new Vector3 (i*Rooms.wallSize, j*Rooms.wallSize, 0f);
+                    }
+                } else {
+                    if(board[i,j]==BoardState.Floor)
+                        prefabInstance = (GameObject)Instantiate (floor, boardController.transform);
+                    else prefabInstance = (GameObject)Instantiate (floor, boardController.transform);
+                    prefabInstance.transform.position = new Vector3 (i*Rooms.wallSize, j*Rooms.wallSize, 0f);
+                }
+            }
+        }
+    }
+
+    void plantPlayerAndFinishPoint(GameObject player, GameObject finish){
+        int leftSideRoomIndex = Random.Range (0, (Rooms.roomData.ToArray ().Length)/3);
+        int rightSideRoomIndex = Random.Range (2*(Rooms.roomData.ToArray ().Length)/3, Rooms.roomData.ToArray ()
+        .Length-1);
+        Rooms.RoomData finishPosition, playerPosition;
+        if (Random.Range (0, 10) > 5) {
+            finishPosition = Rooms.roomData.ToArray () [leftSideRoomIndex];
+            playerPosition = Rooms.roomData.ToArray () [rightSideRoomIndex];
+        } else {
+            playerPosition = Rooms.roomData.ToArray () [leftSideRoomIndex];
+            finishPosition = Rooms.roomData.ToArray () [rightSideRoomIndex];
+        }
+
+        Rooms.roomData.Remove (finishPosition);
+        Instantiate (exit, finishPosition.spawnPoint, Quaternion.identity);
+        Rooms.roomData.Remove (playerPosition);
+        player.transform.position = playerPosition.spawnPoint;
+    }
+
+    void plantTraps(GameObject trapType, int numberOfTraps){
+        for (int i = 0; i < numberOfTraps; i ++) {
+            if (Rooms.roomData.Count == 0)
+                return;
+            randomNumber = Random.Range (0, Rooms.roomData.ToArray ().Length - 1);
+            Rooms.roomData.Remove (Rooms.roomData.ToArray() [randomNumber]);
+            Instantiate (trapType, data.spawnPoint, Quaternion.identity);
+        }
+    }
 
 	void Update(){
 		time += Time.deltaTime;

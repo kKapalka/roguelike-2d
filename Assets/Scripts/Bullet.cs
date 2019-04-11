@@ -7,7 +7,7 @@ public class Bullet : MonoBehaviour {
 	Vector3 direction,position;
 
 	void Update(){
-		this.transform.position += direction / 5;
+		this.transform.position += direction * 0.15f;
 	}
 	void Start(){
 		Destroy (this.gameObject, 3.0f);

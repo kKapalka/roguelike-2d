@@ -6,7 +6,8 @@ using System.Linq;
 public static class HighScoreManager{
 
 	public static bool SubmitNewHighScore(int score){
-		int[]newHighScore;
+		int[] newHighScore;
+
 		if (PlayerPrefs.HasKey ("HighScoreList")) {
 			string[] HighScore = PlayerPrefs.GetString ("HighScoreList").Split (',');
 			newHighScore = new int[HighScore.Length+1];
