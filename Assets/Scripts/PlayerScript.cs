@@ -28,10 +28,12 @@ public class PlayerScript : MonoBehaviour {
 			}
 			dir = moveController.InputDirection;
 			Vector3 rotatedDir = new Vector3 (dir.x, dir.z, 0);
-			lastDirection = rotatedDir;
+            Debug.Log(dir.x);
+            Debug.Log(dir.z);
+            lastDirection = rotatedDir;
 			this.transform.position += rotatedDir / 12;
-			animationTime += Time.deltaTime * (dir.x + dir.z)/2;
-			GetComponent<SpriteRenderer> ().sprite = animationSprites [(int)Mathf.Floor (animationTime * 8) % 4+(getDirection(rotatedDir)*4)];
+            animationTime += Time.deltaTime * Mathf.Clamp(Mathf.Max(Mathf.Abs(dir.x), Mathf.Abs(dir.z)), 0.25f, float.MaxValue);
+            GetComponent<SpriteRenderer> ().sprite = animationSprites [(int)Mathf.Floor (animationTime * 8) % 4+(getDirection(rotatedDir)*4)];
 
 		} else {
 			animationTime = 0.0f;

@@ -61,12 +61,15 @@ public class BoardController : MonoBehaviour {
 		Leaf main = new Leaf (BOARD_SIDES_BUFFER, BOARD_SIDES_BUFFER, BOARD_WIDTH+BOARD_SIDES_BUFFER, BOARD_HEIGHT+BOARD_SIDES_BUFFER);
 		generateLayout(board);
 
-		int numberOfKillerTrapsPerLevel = level;
-		int numberOfShooterTrapsPerLevel = Mathf.Clamp(level-3,0,int.MaxValue)
+        plantPlayerAndFinishPoint(player, exit);
 
 
-        plantTraps(data,killerTrap,numberOfKillerTrapsPerLevel);
-        plantTraps(data,shooterTrap,numberOfShooterTrapsPerLevel);
+        int numberOfKillerTrapsPerLevel = level;
+        int numberOfShooterTrapsPerLevel = Mathf.Clamp(level - 3, 0, int.MaxValue);
+
+
+        plantTraps(killerTrap,numberOfKillerTrapsPerLevel);
+        plantTraps(shooterTrap,numberOfShooterTrapsPerLevel);
 
 	}
 
@@ -109,11 +112,13 @@ public class BoardController : MonoBehaviour {
     }
 
     void plantTraps(GameObject trapType, int numberOfTraps){
+
         for (int i = 0; i < numberOfTraps; i ++) {
             if (Rooms.roomData.Count == 0)
                 return;
-            randomNumber = Random.Range (0, Rooms.roomData.ToArray ().Length - 1);
-            Rooms.roomData.Remove (Rooms.roomData.ToArray() [randomNumber]);
+            int randomRoomIndex = Random.Range (0, Rooms.roomData.ToArray ().Length - 1);
+            Rooms.RoomData data = Rooms.roomData.ToArray()[randomRoomIndex];
+            Rooms.roomData.Remove (data);
             Instantiate (trapType, data.spawnPoint, Quaternion.identity);
         }
     }
