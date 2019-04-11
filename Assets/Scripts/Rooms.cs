@@ -12,16 +12,7 @@ public static class Rooms{
 	public static void ClearData(){
 		roomData.Clear ();
 	}
-	public class RoomData{
-		public Vector3 spawnPoint = new Vector3();
-		public float diameter;
-
-		public RoomData(Vector3 sp, float d){
-			this.spawnPoint=sp;
-			this.diameter=d;
-		}
-
-	}
+	
 	public static List<RoomData> roomData = new List<RoomData>();
 
 }

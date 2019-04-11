@@ -96,7 +96,7 @@ public class BoardController : MonoBehaviour {
         int leftSideRoomIndex = Random.Range (0, (Rooms.roomData.ToArray ().Length)/3);
         int rightSideRoomIndex = Random.Range (2*(Rooms.roomData.ToArray ().Length)/3, Rooms.roomData.ToArray ()
         .Length-1);
-        Rooms.RoomData finishPosition, playerPosition;
+        RoomData finishPosition, playerPosition;
         if (Random.Range (0, 10) > 5) {
             finishPosition = Rooms.roomData.ToArray () [leftSideRoomIndex];
             playerPosition = Rooms.roomData.ToArray () [rightSideRoomIndex];
@@ -117,7 +117,7 @@ public class BoardController : MonoBehaviour {
             if (Rooms.roomData.Count == 0)
                 return;
             int randomRoomIndex = Random.Range (0, Rooms.roomData.ToArray ().Length - 1);
-            Rooms.RoomData data = Rooms.roomData.ToArray()[randomRoomIndex];
+            RoomData data = Rooms.roomData.ToArray()[randomRoomIndex];
             Rooms.roomData.Remove (data);
             Instantiate (trapType, data.spawnPoint, Quaternion.identity);
         }

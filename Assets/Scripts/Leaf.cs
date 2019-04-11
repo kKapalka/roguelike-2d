@@ -62,7 +62,7 @@ public class Leaf{
 				BoardController.board [i, j] = BoardState.Floor;
 			}
 		}
-		Rooms.roomData.Add(new Rooms.RoomData(new Vector3((x1+x2)/2*Rooms.wallSize,(y1+y2)/2*Rooms.wallSize,0f),Mathf.Min(x2-x1,y2-y1)));
+		Rooms.roomData.Add(new RoomData(new Vector3((x1+x2)/2*Rooms.wallSize,(y1+y2)/2*Rooms.wallSize,0f),Mathf.Min(x2-x1,y2-y1)));
 	}
 
 	void ConnectRooms(){

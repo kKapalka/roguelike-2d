@@ -62,6 +62,7 @@
      <Compile Include="Assets\Scripts\Leaf.cs" />
      <Compile Include="Assets\Scripts\MainMenuManager.cs" />
      <Compile Include="Assets\Scripts\PlayerScript.cs" />
+     <Compile Include="Assets\Scripts\RoomData.cs" />
      <Compile Include="Assets\Scripts\Rooms.cs" />
      <Compile Include="Assets\Scripts\ShooterTrapScript.cs" />
  <Reference Include="UnityEditor.StandardEvents">
