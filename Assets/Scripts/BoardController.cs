@@ -128,7 +128,7 @@ public class BoardController : MonoBehaviour {
 		seconds = (int)Mathf.Floor (time);
 		fraction = (int)(time * 100.0f) % 100;
 		timerText.text = seconds + " : " + fraction;
-		if (Rooms.complete && !loaded) {
+		if (!loaded && Rooms.lose) {
 			timerText.gameObject.SetActive (false);
 			minimapCamera.cullingMask |= 1 << LayerMask.NameToLayer ("Tracks");
 			minimapCamera.cullingMask |= 1 << LayerMask.NameToLayer ("Walls");
