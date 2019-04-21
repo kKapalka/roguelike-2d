@@ -50,25 +50,35 @@ public class PlayerScript : MonoBehaviour {
         }
 	}
 	void OnTriggerEnter2D(Collider2D otherCollider){
-		if (collider1.IsTouching (otherCollider) && otherCollider.gameObject.tag == "Killer") {
-			Rooms.lose = true;
-			Rooms.DeathText = "you  have  been  smacked   by  the  killer  trap";
-		} else if (collider1.IsTouching (otherCollider) && otherCollider.gameObject.tag == "Bullet") {
-			Destroy (otherCollider.gameObject);
-			Rooms.lose = true;
-			Rooms.DeathText = "you  have  been  shot   by  the  shooter  trap";
-		} else if (collider1.IsTouching (otherCollider) && otherCollider.gameObject.tag == "Finish") {
-            StartCoroutine(waitForNextLevel());
-        } else if (otherCollider.gameObject.tag == "Wall") {
-            otherCollider.gameObject.layer = 11;
-		}
+        if (!collider1.isTrigger)
+        {
+            if (collider1.IsTouching(otherCollider) && otherCollider.gameObject.tag == "Killer")
+            {
+                Rooms.lose = true;
+                Rooms.DeathText = "you  have  been  smacked   by  the  killer  trap";
+            }
+            else if (collider1.IsTouching(otherCollider) && otherCollider.gameObject.tag == "Bullet")
+            {
+                Destroy(otherCollider.gameObject);
+                Rooms.lose = true;
+                Rooms.DeathText = "you  have  been  shot   by  the  shooter  trap";
+            }
+            else if (collider1.IsTouching(otherCollider) && otherCollider.gameObject.tag == "Finish")
+            {
+                StartCoroutine(waitForNextLevel());
+            }
+            //else if (otherCollider.gameObject.tag == "Wall")
+            //{
+            //    otherCollider.gameObject.layer = 11;
+            //}
+        }
 	}
 
     IEnumerator waitForNextLevel()
     {
         collider1.isTrigger = true;
         Rooms.complete = true;
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1.5f);
         PlayerPrefs.SetInt("Level", PlayerPrefs.GetInt("Level") + 1);
         int scene = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(scene, LoadSceneMode.Single);
