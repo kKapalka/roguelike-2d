@@ -10,7 +10,6 @@ public class ShooterTrapScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		bulletPrefab = (GameObject)Resources.Load ("Bullet");
-		Debug.Log (bulletPrefab);
 	}
 	
 	// Update is called once per frame

@@ -60,6 +60,7 @@
      <Compile Include="Assets\Scripts\HighScoreManager.cs" />
      <Compile Include="Assets\Scripts\KillerTrapScript.cs" />
      <Compile Include="Assets\Scripts\Leaf.cs" />
+     <Compile Include="Assets\Scripts\LevelTextScript.cs" />
      <Compile Include="Assets\Scripts\MainMenuManager.cs" />
      <Compile Include="Assets\Scripts\PlayerScript.cs" />
      <Compile Include="Assets\Scripts\RoomData.cs" />

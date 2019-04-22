@@ -19,7 +19,7 @@ public class BoardController : MonoBehaviour {
 	public static int MINIMAP_STARTING_FIELDOFVIEW = 118;
 
     private static int DEFAULT_SECONDS_PER_POINT = 6;
-    int level=0;
+    int level = 0, score = 0;
 	float time=0.0f;
 	
 	public static BoardState[,] board;
@@ -29,7 +29,7 @@ public class BoardController : MonoBehaviour {
 	public GameObject exit;
 	public GameObject player;
 	public GameObject endPanel;
-	public Text levelText,timerText;
+	public Text levelText, scoreText, timerText;
 	//public Camera minimapCamera;
 
 	
@@ -39,8 +39,14 @@ public class BoardController : MonoBehaviour {
 		Rooms.complete = false;
 		loaded = false;
 		endPanel.SetActive (false);
-		if (!PlayerPrefs.HasKey ("Score"))
-			PlayerPrefs.SetInt ("Score", 0);
+        if (!PlayerPrefs.HasKey("Score"))
+        {
+            PlayerPrefs.SetInt("Score", 0);
+        }
+        else
+        {
+            score = PlayerPrefs.GetInt("Score");
+        }
 		if (!PlayerPrefs.HasKey ("Level")) {
 			PlayerPrefs.SetInt ("Level", 1);
 		} else {
@@ -53,7 +59,7 @@ public class BoardController : MonoBehaviour {
 		BOARD_WIDTH = Rooms.Width + (WIDTH_GROWTH * level);
 		BOARD_HEIGHT = Rooms.Height + (HEIGHT_GROWTH * level);
 		levelText.text = "Level " + level;
-
+        scoreText.text = "Score: " + score;
 
 		Rooms.ClearData ();
 		Rooms.wallSize = fullWallPrefabs[0].GetComponent<SpriteRenderer>().bounds.size.x;
@@ -127,6 +133,12 @@ public class BoardController : MonoBehaviour {
     }
 
 	void Update(){
+        if (levelText.color.a > 0)
+        {
+            Color levelTextColor = levelText.color;
+            levelTextColor.a = Mathf.Clamp((levelText.color.a - (Time.deltaTime / 3f)), 0.0f, 1.0f);
+            levelText.color = levelTextColor;
+        }
 		time += Time.deltaTime;
         if (!Rooms.complete)
         {
@@ -162,16 +174,25 @@ public class BoardController : MonoBehaviour {
             {
                 int secondsPerLevel = DEFAULT_SECONDS_PER_POINT + (PlayerPrefs.GetInt("Level") * 2);
                 int scoreAddition = Mathf.Clamp((int)Mathf.Floor(((secondsPerLevel * 3) - seconds) / (float)secondsPerLevel), 0, 3);
+                StartCoroutine(AddScore(PlayerPrefs.GetInt("Score"), 1 + scoreAddition));
                 int newScore = PlayerPrefs.GetInt("Score") + 1 + scoreAddition;
                 PlayerPrefs.SetInt("Score", newScore);
-                Debug.Log(PlayerPrefs.GetInt("Score"));
                 timerText.text += "\nlevel complete!";
             }
 			loaded = true;
 
 		}
 	}
-	
+	IEnumerator AddScore(int baseScore, int scoreAddition)
+    {
+        int score = baseScore;
+        for(int i = 0; i < scoreAddition; i++)
+        {
+            score += 1;
+            scoreText.text = "Score: " + score;
+            yield return new WaitForSeconds(0.25f);
+        }
+    }
     int getNeighborsFull(int i, int j)
     {
         int neighbors = 0;
