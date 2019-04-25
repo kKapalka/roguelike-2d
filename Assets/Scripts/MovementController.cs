@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Controller : MonoBehaviour, IDragHandler,IPointerDownHandler,IPointerUpHandler {
+public class MovementController : MonoBehaviour, IDragHandler,IPointerDownHandler,IPointerUpHandler {
 
 	private Image backgroundImage,controllerImage;
 

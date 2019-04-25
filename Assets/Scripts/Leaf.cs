@@ -8,12 +8,16 @@ public class Leaf{
 	string splitDirection;
 
 	public Leaf(int x1,int y1,int x2,int y2){
-		this.x1 = x1;
+        if(GridController.board == null)
+        {
+            GridController.board = new BoardState[GridController.BOARD_WIDTH + (GridController.SIDES_BUFFER * 2), GridController.BOARD_HEIGHT + (GridController.SIDES_BUFFER * 2)];
+        }
+        this.x1 = x1;
 		this.y1 = y1;
 		this.x2 = x2;
 		this.y2 = y2;
 		Split ();
-		if (left != null && right != null) {
+        if (left != null && right != null) {
 			ConnectRooms();
 		} else {
 			CreateRoom ();
@@ -48,18 +52,19 @@ public class Leaf{
 	}
 
 	void CreateRoom(){
-		
-		int width = x2 - x1;
+
+        int width = x2 - x1;
 		int height = y2 - y1;
 		//subtract from outer bounds to create proper walls
-		x1=Mathf.Clamp(x1+Random.Range(1,(width/3)+1),0,BoardController.BOARD_WIDTH+BoardController.BOARD_SIDES_BUFFER-1);
-		y1 = Mathf.Clamp (y1 + Random.Range (1, (height/3)+1), 0, BoardController.BOARD_HEIGHT+BoardController.BOARD_SIDES_BUFFER-1);
-		x2=Mathf.Clamp(x2-Random.Range(1,(width/3)+2),0,BoardController.BOARD_WIDTH+BoardController.BOARD_SIDES_BUFFER-1);
-		y2=Mathf.Clamp(y2-Random.Range(1,(height/3)+2),0,BoardController.BOARD_HEIGHT+BoardController.BOARD_SIDES_BUFFER-1);
+		x1=Mathf.Clamp(x1+Random.Range(1,(width/3)+1), 0, GridController.BOARD_WIDTH+GridController.SIDES_BUFFER-1);
+		y1 = Mathf.Clamp (y1 + Random.Range (1, (height/3)+1), 0, GridController.BOARD_HEIGHT+GridController.SIDES_BUFFER-1);
+		x2=Mathf.Clamp(x2-Random.Range(1,(width/3)+2), 0, GridController.BOARD_WIDTH+GridController.SIDES_BUFFER-1);
+		y2=Mathf.Clamp(y2-Random.Range(1,(height/3)+2), 0, GridController.BOARD_HEIGHT+GridController.SIDES_BUFFER-1);
 		//fill inside with floor
+        
 		for (int i = x1; i <= x2; i++) {
 			for (int j = y1; j <= y2; j++) {
-				BoardController.board [i, j] = BoardState.Floor;
+				GridController.board[i, j] = BoardState.Floor;
 			}
 		}
 		Rooms.roomData.Add(new RoomData(new Vector3((x1+x2)/2*Rooms.wallSize,(y1+y2)/2*Rooms.wallSize,0f),Mathf.Min(x2-x1,y2-y1)));
@@ -89,22 +94,22 @@ public class Leaf{
 			coord = Random.Range (tempx1, tempx2);
 			//main corridor part
 			for (int i = tempy1; i <= tempy2; i++) {
-				BoardController.board [coord, i] = BoardState.Floor;
-				BoardController.board [((coord > BoardController.BOARD_WIDTH / 2) ? coord - 1 : coord + 1), i] = BoardState.Floor;
+				GridController.board [coord, i] = BoardState.Floor;
+				GridController.board [((coord > GridController.BOARD_WIDTH / 2) ? coord - 1 : coord + 1), i] = BoardState.Floor;
 			}
 			//fill until floor has been found
 			fill = tempy1 - 1;
-			while (BoardController.board [coord, fill] != BoardState.Floor && fill > BoardController.BOARD_SIDES_BUFFER) {
+			while (GridController.board [coord, fill] != BoardState.Floor && fill > GridController.SIDES_BUFFER) {
 				
-				BoardController.board [coord, fill] = BoardState.Floor;
-				BoardController.board [((coord > BoardController.BOARD_WIDTH / 2) ? coord - 1 : coord + 1), fill--] = BoardState.Floor;
+				GridController.board [coord, fill] = BoardState.Floor;
+				GridController.board [((coord > GridController.BOARD_WIDTH / 2) ? coord - 1 : coord + 1), fill--] = BoardState.Floor;
 			}
 
 			fill = tempy2+1;
-			while (BoardController.board [coord, fill] != BoardState.Floor && fill<BoardController.BOARD_HEIGHT+BoardController.BOARD_SIDES_BUFFER) {
+			while (GridController.board [coord, fill] != BoardState.Floor && fill<GridController.BOARD_HEIGHT+GridController.SIDES_BUFFER) {
 				
-				BoardController.board [coord, fill] = BoardState.Floor;
-				BoardController.board [((coord > BoardController.BOARD_WIDTH / 2) ? coord - 1 : coord + 1), fill++] = BoardState.Floor;
+				GridController.board [coord, fill] = BoardState.Floor;
+				GridController.board [((coord > GridController.BOARD_WIDTH / 2) ? coord - 1 : coord + 1), fill++] = BoardState.Floor;
 			}
 			break;
 		case "Vertical":
@@ -116,22 +121,22 @@ public class Leaf{
 
 			//main corridor part
 			for (int i = tempx1; i <= tempx2; i++) {
-				BoardController.board [i, coord] = BoardState.Floor;
-				BoardController.board [i, ((coord > BoardController.BOARD_HEIGHT / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
+				GridController.board [i, coord] = BoardState.Floor;
+				GridController.board [i, ((coord > GridController.BOARD_HEIGHT / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
 			}
 			//fill until floor has been found
 			fill = tempx1 - 1;
-			while (BoardController.board [fill, coord] != BoardState.Floor && fill > BoardController.BOARD_SIDES_BUFFER) {
+			while (GridController.board [fill, coord] != BoardState.Floor && fill > GridController.SIDES_BUFFER) {
 				
-				BoardController.board [fill, coord] = BoardState.Floor;
-				BoardController.board [fill--, ((coord > BoardController.BOARD_HEIGHT / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
+				GridController.board [fill, coord] = BoardState.Floor;
+				GridController.board [fill--, ((coord > GridController.BOARD_HEIGHT / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
 			}
 
 			fill = tempx2+1;
-			while (BoardController.board [fill,coord] != BoardState.Floor && fill<BoardController.BOARD_WIDTH+BoardController.BOARD_SIDES_BUFFER) {
+			while (GridController.board [fill,coord] != BoardState.Floor && fill<GridController.BOARD_WIDTH+GridController.SIDES_BUFFER) {
 				
-				BoardController.board [fill,coord] = BoardState.Floor;
-				BoardController.board [fill++,((coord > BoardController.BOARD_HEIGHT / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
+				GridController.board [fill,coord] = BoardState.Floor;
+				GridController.board [fill++,((coord > GridController.BOARD_HEIGHT / 2) ? coord - 1 : coord + 1)] = BoardState.Floor;
 			}
 			break;
 		}
