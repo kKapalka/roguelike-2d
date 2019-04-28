@@ -8,7 +8,7 @@ public class Leaf{
 	string splitDirection;
 
 	public Leaf(int x1,int y1,int x2,int y2){
-        if(GridController.board == null)
+        if (GridController.board == null)
         {
             GridController.board = new BoardState[GridController.BOARD_WIDTH + (GridController.SIDES_BUFFER * 2), GridController.BOARD_HEIGHT + (GridController.SIDES_BUFFER * 2)];
         }
@@ -57,7 +57,7 @@ public class Leaf{
 		int height = y2 - y1;
 		//subtract from outer bounds to create proper walls
 		x1=Mathf.Clamp(x1+Random.Range(1,(width/3)+1), 0, GridController.BOARD_WIDTH+GridController.SIDES_BUFFER-1);
-		y1 = Mathf.Clamp (y1 + Random.Range (1, (height/3)+1), 0, GridController.BOARD_HEIGHT+GridController.SIDES_BUFFER-1);
+		y1=Mathf.Clamp (y1 + Random.Range (1, (height/3)+1), 0, GridController.BOARD_HEIGHT+GridController.SIDES_BUFFER-1);
 		x2=Mathf.Clamp(x2-Random.Range(1,(width/3)+2), 0, GridController.BOARD_WIDTH+GridController.SIDES_BUFFER-1);
 		y2=Mathf.Clamp(y2-Random.Range(1,(height/3)+2), 0, GridController.BOARD_HEIGHT+GridController.SIDES_BUFFER-1);
 		//fill inside with floor
@@ -67,7 +67,12 @@ public class Leaf{
 				GridController.board[i, j] = BoardState.Floor;
 			}
 		}
-		Rooms.roomData.Add(new RoomData(new Vector3((x1+x2)/2*Rooms.wallSize,(y1+y2)/2*Rooms.wallSize,0f),Mathf.Min(x2-x1,y2-y1)));
+        Debug.Log(((float)x1 + x2) / 2f);
+        Debug.Log(((float)y1 + y2) / 2f);
+        Vector3 spawnPoint = new Vector3((((float)x1+1f + (float)x2) / 2f) * Rooms.wallSize, (((float)y1+1f + (float)y2) / 2f) * Rooms.wallSize, 0f);
+        Debug.Log(spawnPoint);
+        Rooms.roomData.Add(new RoomData(spawnPoint,Mathf.Min(x2-x1,y2-y1)));
+
 	}
 
 	void ConnectRooms(){

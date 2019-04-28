@@ -5,9 +5,9 @@ using UnityEngine.Tilemaps;
 
 public class GridController : MonoBehaviour {
 
-    static int BASE_WIDTH = 30, BASE_HEIGHT = 25;
-    public static int SIDES_BUFFER = 7;
-    static int WIDTH_GROWTH = 5, HEIGHT_GROWTH = 4;
+    static int BASE_WIDTH = 20, BASE_HEIGHT = 16;
+    public static int SIDES_BUFFER = 5;
+    static int WIDTH_GROWTH = 4, HEIGHT_GROWTH = 3;
     public static int BOARD_WIDTH, BOARD_HEIGHT;
     public Tilemap floors, walls;
     public Tile floor, wall;
@@ -48,9 +48,9 @@ public class GridController : MonoBehaviour {
         Rooms.ClearData();
         Leaf main = new Leaf(SIDES_BUFFER, SIDES_BUFFER, BOARD_WIDTH + SIDES_BUFFER, BOARD_HEIGHT + SIDES_BUFFER);
 
-        for (int i = SIDES_BUFFER - 1; i < board.GetLength(0) - SIDES_BUFFER + 1; i++)
+        for (int i = 0; i < board.GetLength(0); i++)
         {
-            for (int j = SIDES_BUFFER - 1; j < board.GetLength(1) - SIDES_BUFFER + 1; j++)
+            for (int j =0; j < board.GetLength(1); j++)
             {
                 if (board[i, j] == BoardState.Wall)
                 {
