@@ -67,10 +67,8 @@ public class Leaf{
 				GridController.board[i, j] = BoardState.Floor;
 			}
 		}
-        Debug.Log(((float)x1 + x2) / 2f);
-        Debug.Log(((float)y1 + y2) / 2f);
         Vector3 spawnPoint = new Vector3((((float)x1+1f + (float)x2) / 2f) * Rooms.wallSize, (((float)y1+1f + (float)y2) / 2f) * Rooms.wallSize, 0f);
-        Debug.Log(spawnPoint);
+
         Rooms.roomData.Add(new RoomData(spawnPoint,Mathf.Min(x2-x1,y2-y1)));
 
 	}

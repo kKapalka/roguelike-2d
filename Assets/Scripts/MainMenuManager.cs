@@ -28,13 +28,13 @@ public class MainMenuManager : MonoBehaviour {
 		SceneManager.LoadScene ("Level");
 	}
 	public void ShowCredits(){
-		transform.GetChild (0).gameObject.SetActive (false);
+		transform.GetChild (1).gameObject.SetActive (false);
 		hintText.SetActive (true);
 		creditsText.SetActive (true);
 		notOnMainMenu = true;
 	}
 	public void ShowHighScore(){
-		transform.GetChild (0).gameObject.SetActive (false);
+		transform.GetChild (1).gameObject.SetActive (false);
 		hintText.SetActive (true);
 		highScoreText.gameObject.SetActive (true);
 		highScoreText.text = "";
@@ -54,7 +54,7 @@ public class MainMenuManager : MonoBehaviour {
 	}
 	void Update(){
 		if (((Input.touchCount>0 && Input.GetTouch (0).phase==TouchPhase.Began) || Input.anyKey || Input.GetMouseButton (0)) && notOnMainMenu) {
-			transform.GetChild (0).gameObject.SetActive (true);
+			transform.GetChild (1).gameObject.SetActive (true);
 			highScoreText.gameObject.SetActive (false);
 			hintText.SetActive (false);
 			creditsText.SetActive (false);
